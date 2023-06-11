@@ -2,7 +2,7 @@ import axios from "axios";
 import { Component } from "react";
 import { Searchbar } from "./Searchbar/Searchbar";
 
-const API_KEY = '35835023-fcd630b3e0ba098d72230f346';
+const API_KEY = '37188791-57fdb1721517f709a21fccc41';
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 axios.defaults.headers.common['Authorization'] = `Bearer ${API_KEY}`;
 axios.defaults.params = {
