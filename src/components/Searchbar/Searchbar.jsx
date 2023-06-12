@@ -1,30 +1,25 @@
-import { Formik, Form, Field  } from "formik"
-import styled from "@emotion/styled";
-
-const Input = styled(Field)`
-margin-left: 20px;
-`
-
+import { Formik } from "formik"
+import { StyledHeader, StyledForm, StyledInput, StyledButton, StyledIcon } from "./Searchbar.styled"
 
 export const Searchbar = ({onSubmit}) =>{
     return (
     <>
-    <header >
+    <StyledHeader >
     <Formik initialValues={{ query: '' }} onSubmit={onSubmit}>
-  <Form >
-    <button type="submit">
-      <span >Search</span>
-    </button>
-    <Input
+  <StyledForm >
+    <StyledButton type="submit">
+      <span ><StyledIcon/></span>
+    </StyledButton>
+    <StyledInput
       type="text"
       name="query"
       autoComplete="off"
       autoFocus
       placeholder="Search images and photos"
     />
-  </Form>
+  </StyledForm>
   </Formik>
-</header>
+</StyledHeader>
     </>
     )
 }
