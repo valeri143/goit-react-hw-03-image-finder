@@ -1,17 +1,9 @@
-import axios from "axios";
 import { Component } from "react";
 import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Button } from "./Button/Button";
 import { StyledApp, StyledLoad } from "./App.styled";
-
-const API_KEY = '37188791-57fdb1721517f709a21fccc41';
-axios.defaults.baseURL = 'https://pixabay.com/api';
-axios.defaults.params = {
-  key: API_KEY,
-  orientation: 'horizontal',
-  per_page: 12,
-};
+import { fetchData } from "./helpers/api";
 
 export class App extends Component {
   state = {
@@ -23,11 +15,23 @@ export class App extends Component {
     isLoading: false
   };
 
+  componentDidUpdate = (_, prevState) => {
+    const {query, page} = this.state;
+    if(prevState.query !== query || prevState.page !== page){
+      this.getImages(query, page)
+    }
+  }
+  
   getImages = async (query, page) => {
     this.setState({isLoading: true})
     try {
-      const response = await axios.get(`/?q=${query}&page=${page}`);
-      return response.data;
+      const dataOfImages = await fetchData(query, page)
+      if (dataOfImages.hits.length === 0) {
+        window.alert('Ooops there are no images on your request');
+        this.setState({ isVisibleButton: false });
+        return;
+      }
+      return dataOfImages;
     } catch (error) {
       console.error('Error:', error.message);
       throw error;
@@ -39,11 +43,6 @@ export class App extends Component {
 
   onSubmit = async (values, { resetForm }) => {
     const data = await this.getImages(values.query, 1);
-    if (data.hits.length === 0) {
-      window.alert('Ooops there are no images on your request');
-      this.setState({ isVisibleButton: false });
-      return;
-    }
     this.setState({
       images: data.hits,
       isVisibleButton: true,
