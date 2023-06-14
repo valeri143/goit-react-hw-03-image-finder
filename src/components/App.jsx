@@ -15,10 +15,14 @@ export class App extends Component {
     isLoading: false
   };
 
-  componentDidUpdate = (_, prevState) => {
+  componentDidUpdate = async (_, prevState) => {
     const {query, page} = this.state;
     if(prevState.query !== query || prevState.page !== page){
-      this.getImages(query, page)
+    const data =  await this.getImages(query, page)
+    this.setState({
+      images: [...this.state.images, ...data.hits],
+      isVisibleButton: (prevState.images.length + data.hits.length) < data.totalHits
+    })
     }
   }
   
@@ -42,13 +46,10 @@ export class App extends Component {
   };
 
   onSubmit = async (values, { resetForm }) => {
-    const data = await this.getImages(values.query, 1);
     this.setState({
-      images: data.hits,
-      isVisibleButton: true,
+      images: [],
       query: values.query,
       page: 1,
-      totalHits: data.totalHits,
       isLoading: false
     });
     resetForm();
@@ -56,14 +57,7 @@ export class App extends Component {
 
   onClick = async () => {
     const nextPage = this.state.page + 1;
-    const data = await this.getImages(this.state.query, nextPage);
-    const newImages = [...this.state.images, ...data.hits];
-
-    this.setState(prevState => ({
-      images: newImages,
-      page: nextPage,
-      isVisibleButton: (prevState.images.length + data.hits.length) < prevState.totalHits
-    }));
+     this.setState({page: nextPage });
   };
 
   render() {
